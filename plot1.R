@@ -1,0 +1,30 @@
+mydf<-read.table("household_power_consumption.txt", header = TRUE, sep = ";", dec=".") ##, nrows = 100)
+
+library(dplyr)
+mydf.1 <- filter(mydf, Date == "2/2/2007" | Date == "1/2/2007" )  ## dd / mm/ yy
+rm(mydf)
+## convert all columns into proper data types
+mydf.1 <- mutate(mydf.1, Global_active_power = as.numeric(as.character(Global_active_power)))
+mydf.1 <- mutate(mydf.1, Global_active_power = as.numeric(as.character(Global_active_power)))
+mydf.1 <- mutate(mydf.1, Voltage = as.numeric(as.character(Voltage)))
+mydf.1 <- mutate(mydf.1, DateTime = paste(Date, Time) )
+mydf.1 <- mutate(mydf.1, DateTime = as.POSIXct(as.character(DateTime), format= "%d/%m/%Y %H:%M:%S" ) ) ##not working
+mydf.1 <- mutate(mydf.1, Sub_metering_1 = as.numeric(as.character(Sub_metering_1)),
+                 Sub_metering_2 = as.numeric(as.character(Sub_metering_2)),
+                 Global_reactive_power = as.numeric(as.character(Global_reactive_power)),
+                 Global_intensity = as.numeric(as.character(Global_intensity))
+)
+
+## sort by datetime
+mydf.1 <- arrange(mydf.1, DateTime)
+
+## plot the result into png file
+png(file = "plot1.png")
+
+## ploting 
+hist(mydf.1$Global_active_power, col = 2, main = "Global Active Power", 
+     xlab = "Global Active Power (kilowatts)",
+     ylab = "Frequency")
+
+## close plotting device
+dev.off()
